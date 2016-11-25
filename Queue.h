@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-typedef char ElemType;
+typedef int ElemType;
 typedef int Status;
 
 typedef struct Node {
