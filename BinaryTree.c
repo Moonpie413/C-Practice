@@ -176,7 +176,7 @@ BTree delete (ElemType e, BTree T)
             {
                 T = T->left;
             }
-            free(T);
+            free(tmp);
         }
     }
     return T;
