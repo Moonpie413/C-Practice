@@ -21,6 +21,10 @@ Position find(ElemType e, BTree T);
 Position findMin(BTree T);
 // 查找树中最大的元素
 Position findMax(BTree T);
+// 插入一个数据
+BTree insert(ElemType e, BTree T);
+// 删除一个节点
+BTree delete (ElemType e, BTree T);
 
 int main(int argc, char const *argv[])
 {
@@ -29,11 +33,19 @@ int main(int argc, char const *argv[])
     addAll(datas, length);
     BTree T;
     // 因为树的内容尚未初始化，所以传指针
+    // 如果传递的树的指针的值，则初始化只在函数的作用域中有效，所以必须传指针的指针
+    // 跟insert的区别是insert中会有返回值，所以会把值传回来
     createTree(&T);
     preOrder(T);
-    printf("test find: %d\n", find(50, T) -> data);
-    printf("test findMin: %d\n", findMin(T) -> data);
-    printf("test findMax: %d\n", findMax(T) -> data);
+    printf("test find: %d\n", find(50, T)->data);
+    printf("test findMin: %d\n", findMin(T)->data);
+    printf("test findMax: %d\n", findMax(T)->data);
+    insert(100, T);
+    insert(16, T);
+    delete(16, T);
+    delete(100, T);
+    delete(30, T);
+    preOrder(T);
 
     printf("\n");
     printf("press any key to exit~~~");
@@ -108,7 +120,64 @@ Position findMax(BTree T)
 {
     if (T)
     {
-        while (T -> right) T = T->right;
+        while (T->right)
+            T = T->right;
+    }
+    return T;
+}
+
+BTree insert(ElemType e, BTree T)
+{
+    if (T == NULL)
+    {
+        T = (BTree)malloc(sizeof(BNode));
+        T->data = e;
+        T->left = T->right = NULL;
+    }
+    else
+    {
+        if (e > T->data)
+        {
+            T->right = insert(e, T->right);
+        }
+        else if (e < T->data)
+        {
+            T->left = insert(e, T->left);
+        }
+    }
+    return T;
+}
+
+BTree delete (ElemType e, BTree T)
+{
+    if (!T)
+        printf("create Tree firest!'");
+    Position tmp;
+    if (e > T->data)
+        T->right = delete (e, T->right);
+    if (e < T->data)
+        T->left = delete (e, T->left);
+    if (e == T->data)
+    {
+        if (T->left && T->right)
+        {
+            tmp = findMax(T->left);
+            T->data = tmp->data;
+            T->left = delete (T->data, T->left);
+        }
+        else
+        {
+            tmp = T;
+            if (!T->left)
+            {
+                T = T->right;
+            }
+            else if (!T->right)
+            {
+                T = T->left;
+            }
+            free(T);
+        }
     }
     return T;
 }
